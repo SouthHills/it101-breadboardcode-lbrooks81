@@ -1,4 +1,4 @@
-# Description : Control RGBLED with Potentiometer 
+# Description : Control RGBLED with Potentiometers
 from pathlib import Path
 import sys
 from gpiozero import RGBLED
@@ -10,20 +10,20 @@ from ADCDevice import *
 
 USING_GRAVITECH_ADC = False # Only modify this if you are using a Gravitech ADC
 
-ledRedPin = 15      # define 3 pins for RGBLED
-ledGreenPin = 13
-ledBluePin = 11
-rgb_led = RGBLED(ledRed=ledRedPin, ledGreen=ledGreenPin, ledBlue=ledBluePin, pwm=True)
-adc = ADCDevice() # Define an ADCDevice class object
+RED_LED_PIN = 22      # define 3 pins for RGBLED
+GREEN_LED_PIN = 27
+BLUE_LED_PIN = 17
+RGB_LED = RGBLED(red=RED_LED_PIN, green=GREEN_LED_PIN, blue=BLUE_LED_PIN, pwm=True)
+ADC = ADCDevice() # Define an ADCDevice class object
 
 def setup():
-    global adc
-    if(adc.detectI2C(0x48) and USING_GRAVITECH_ADC): 
-        adc = GravitechADC()
-    elif(adc.detectI2C(0x48)): # Detect the pcf8591.
-        adc = PCF8591()
-    elif(adc.detectI2C(0x4b)): # Detect the ads7830
-        adc = ADS7830()
+    global ADC
+    if(ADC.detectI2C(0x48) and USING_GRAVITECH_ADC): 
+        ADC = GravitechADC()
+    elif(ADC.detectI2C(0x48)): # Detect the pcf8591.
+        ADC = PCF8591()
+    elif(ADC.detectI2C(0x4b)): # Detect the ads7830
+        ADC = ADS7830()
     else:
         print("No correct I2C address found, \n"
             "Please use command 'i2cdetect -y 1' to check the I2C address! \n"
@@ -31,21 +31,23 @@ def setup():
         exit(-1)
     
 def loop():
+    global ADC, RGB_LED
     while True:     
-        red_value = adc.analogRead(0)       # read ADC value of 3 potentiometers
-        green_value = adc.analogRead(1)
-        blue_value = adc.analogRead(2)
+        red_value = ADC.analogRead(0)       # read ADC value of 3 potentiometers
+        green_value = ADC.analogRead(1)
+        blue_value = ADC.analogRead(2)
         
         # map the read value of potentiometers into normalized values (0-1) and set the RGBLED color
-        rgb_led.color = (red_value / 255.0, green_value / 255.0, blue_value / 255.0)
+        RGB_LED.value = (red_value / 255.0, green_value / 255.0, blue_value / 255.0)
         
         # print read ADC value
         print(f'ADC Value value_Red: {red_value}, value_Green: {green_value}, value_Blue: {blue_value}')
         time.sleep(0.01)
 
 def destroy():
-    adc.close()
-    rgb_led.close()
+    global ADC, RGB_LED
+    ADC.close()
+    RGB_LED.close()
     
 if __name__ == '__main__': # Program entrance
     print ('Program is starting ... ')

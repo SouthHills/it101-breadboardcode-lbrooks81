@@ -1,32 +1,39 @@
-import RPi.GPIO as GPIO
-import time
+# NOTE: If this fails to run, turn off the SPI and I2C interfaces.
+# Turn them back on when this lab is complete.
+# Alternatively, you can use the lesser abstracted RPi.GPIO interface
+#   in the LightWater_RPi.GPIO.py file.
+from gpiozero import LEDBarGraph
+from time import sleep
 
-ledPins = [11, 12, 13, 15, 16, 18, 22, 3, 5, 24]
+LED_PINS : list[int] = [17, 18, 27, 22, 23, 24, 25, 2, 3, 8]
+LEDS = LEDBarGraph(*LED_PINS, active_high=False)
 
-def setup():    
-    GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
-    GPIO.setup(ledPins, GPIO.OUT)   # set all ledPins to OUTPUT mode
-    GPIO.output(ledPins, GPIO.HIGH) # make all ledPins output HIGH level, turn off all led
+def setup():
+    global LEDS
+    for led in LEDS:  # make led(on) move from left to right
+        led.off()
 
 def loop():
+    global LEDS
     while True:
-        for pin in ledPins:     # make led(on) move from left to right
-            GPIO.output(pin, GPIO.LOW)  
-            time.sleep(0.1)
-            GPIO.output(pin, GPIO.HIGH)
-        for pin in ledPins[::-1]:       # make led(on) move from right to left
-            GPIO.output(pin, GPIO.LOW)  
-            time.sleep(0.1)
-            GPIO.output(pin, GPIO.HIGH)
-
+        for led in LEDS:  # make led(on) move from left to right
+            led.on()
+            sleep(0.2)
+            led.off()
+        for led in LEDS[::-1]:  # make led(on) move from right to left
+            led.on()
+            sleep(0.2)
+            led.off()
+            
 def destroy():
-    GPIO.cleanup()                     # Release all GPIO
+    global LEDS
+    for led in LEDS:  # make led(on) move from left to right
+        led.close()
 
-if __name__ == '__main__':     # Program entrance
+if __name__ == '__main__':  # Program entrance
     print ('Program is starting...')
     setup()
     try:
         loop()
     except KeyboardInterrupt:  # Press ctrl-c to end the program.
         destroy()
-
