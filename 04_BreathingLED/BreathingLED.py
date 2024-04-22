@@ -22,7 +22,6 @@ def destroy():
     LED.close()
 
 if __name__ == '__main__':     # Program entrance
-    global LED
     print ('Program is starting ... ')
     print(f"Using pin {LED.pin}")
     try:
