@@ -1,16 +1,16 @@
-# Description : Use ADC module to read the voltage value of potentiometer.
-# NOTE: The ADCDevice module exists in the Common directory.
+# Description : Control LED with Photoresistor
 from pathlib import Path
 import sys
+from gpiozero import PWMLED
 import time
 
-# The next two lines are required to be able to properly import ADCDevice
 HERE = Path(__file__).parent.parent
 sys.path.append(str(HERE / 'Common'))
 from ADCDevice import * 
 
 USING_GRAVITECH_ADC = False # Only modify this if you are using a Gravitech ADC
 
+LED = PWMLED(17)
 ADC = ADCDevice() # Define an ADCDevice class object
 
 def setup():
@@ -26,23 +26,26 @@ def setup():
             "Please use command 'i2cdetect -y 1' to check the I2C address! \n"
             "Program Exit. \n")
         exit(-1)
-        
+    
 def loop():
+    global ADC, LED
     while True:
-        value = ADC.analogRead(0)    # read the ADC value of channel 0
-        voltage = value / 255.0 * 3.3  # calculate the voltage value
-        print ('ADC Value : %d, Voltage : %.2f'%(value,voltage))
-        time.sleep(0.1)
+        value = ADC.analogRead(0)   # read the ADC value of channel 0
+        LED.value = value / 255.0   # Mapping to PWM duty cycle        
+        voltage = value / 255.0 * 3.3
+        print (f'ADC Value: {value} \tVoltage: {voltage:.2f} \tLED Value: {LED.value:.2f}')
+        time.sleep(0.01)
 
 def destroy():
+    global ADC, LED
     ADC.close()
+    LED.close()
     
 if __name__ == '__main__':   # Program entrance
-    print ('Program is starting ... ')
+    print ('Program is starting... ')
+    setup()
     try:
-        setup()
         loop()
-    except KeyboardInterrupt: # Press ctrl-c to end the program.
+    except KeyboardInterrupt:  # Press ctrl-c to end the program.
         destroy()
         
-    

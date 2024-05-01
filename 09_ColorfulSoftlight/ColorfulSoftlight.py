@@ -41,7 +41,7 @@ def loop():
         RGB_LED.value = (red_value / 255.0, green_value / 255.0, blue_value / 255.0)
         
         # print read ADC value
-        print(f'ADC Value value_Red: {red_value}, value_Green: {green_value}, value_Blue: {blue_value}')
+        print(f'Red: {red_value} \tGreen: {green_value} \tBlue: {blue_value}')
         time.sleep(0.01)
 
 def destroy():

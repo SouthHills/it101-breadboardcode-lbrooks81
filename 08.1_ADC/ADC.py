@@ -1,16 +1,16 @@
 # Description : Use ADC module to read the voltage value of potentiometer.
+# NOTE: The ADCDevice module exists in the Common directory.
 from pathlib import Path
 import sys
-from gpiozero import PWMLED
 import time
 
+# The next two lines are required to be able to properly import ADCDevice
 HERE = Path(__file__).parent.parent
 sys.path.append(str(HERE / 'Common'))
 from ADCDevice import * 
 
 USING_GRAVITECH_ADC = False # Only modify this if you are using a Gravitech ADC
 
-LED = PWMLED(17) #17 is the pin
 ADC = ADCDevice() # Define an ADCDevice class object
 
 def setup():
@@ -28,20 +28,13 @@ def setup():
         exit(-1)
         
 def loop():
-    global LED
     while True:
-        # read the ADC value of channel 0
-        value = ADC.analogRead(0)  # Gets a value between 0 and 255
-        # Set LED brightness directly with value from ADC
-        LED.value = value / 255.0  # Value of PWM LED must be between 0 and 1
-        # calculate the voltage value
-        voltage = value / 255.0 * 3.3  # 3.3 because we are using the 3.3V lead
-        print(f'ADC Value : {value}, Voltage : {voltage:.2f}')
-        time.sleep(0.03)
+        value = ADC.analogRead(0)    # read the ADC value of channel 0
+        voltage = value / 255.0 * 3.3  # calculate the voltage value
+        print(f'ADC Value: {value} \tVoltage: {voltage:.2f}')
+        time.sleep(0.1)
 
 def destroy():
-    global LED, ADC
-    LED.close()
     ADC.close()
     
 if __name__ == '__main__':   # Program entrance
@@ -52,3 +45,4 @@ if __name__ == '__main__':   # Program entrance
     except KeyboardInterrupt: # Press ctrl-c to end the program.
         destroy()
         
+    
