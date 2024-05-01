@@ -10,8 +10,7 @@ from ADCDevice import *
 
 USING_GRAVITECH_ADC = False # Only modify this if you are using a Gravitech ADC
 
-LEDs = (PWMLED(17), PWMLED(26))
-
+LED = PWMLED(17)
 ADC = ADCDevice() # Define an ADCDevice class object
 
 def setup():
@@ -29,22 +28,20 @@ def setup():
         exit(-1)
         
 def loop():
-    global LEDs
+    global LED
     while True:
         # read the ADC value of channel 0
-        values = (ADC.analogRead(0), ADC.analogRead(7))
+        value =ADC.analogRead(0)
         # Set LED brightness directly with value from ADC
-        LEDs[0].value = values[0] / 255.0  # Value of PWM LED must be between 0 and 1
-        LEDs[1].value = values[1] / 255.0
+        LED.value = value / 255.0  # Value of PWM LED must be between 0 and 1
         # calculate the voltage value
-        voltage = values[0]/ 255.0 * 3.3  # 3.3 because we are using the 3.3V lead
-        print(f'ADC Value : {values[0]}, Voltage : {voltage:.2f}')
+        voltage = value / 255.0 * 3.3  # 3.3 because we are using the 3.3V lead
+        print(f'ADC Value: {value} \tVoltage: {voltage:.2f}')
         time.sleep(0.03)
 
 def destroy():
-    global LEDs, ADC
-    LEDs[0].close()
-    LEDs[1].close()
+    global LED, ADC
+    LED.close()
     ADC.close()
     
 if __name__ == '__main__':   # Program entrance
