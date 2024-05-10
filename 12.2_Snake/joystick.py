@@ -38,9 +38,10 @@ class Joystick:
         button_pressed = self.BUTTON.is_active
         if button_pressed and not self.button_pressed_momentary:
             self.button_pressed_momentary = True
-        else:
+            return True
+        elif not button_pressed:
             self.button_pressed_momentary = False
-        return self.button_pressed_momentary
+        return False
             
     def get_direction(self, x = None, y = None):
         # If this method has been called seperately from get_xy_pos(), x and y need values
