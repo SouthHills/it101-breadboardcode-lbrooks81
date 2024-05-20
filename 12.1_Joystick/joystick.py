@@ -62,7 +62,6 @@ def get_direction(x, y):
         last_direction = 'Left' if x < 127 else 'Right'
     elif abs(127 - y) > abs(127 - x):
         last_direction = 'Up' if y < 127 else 'Down'
-     
     return last_direction
 
 def destroy():

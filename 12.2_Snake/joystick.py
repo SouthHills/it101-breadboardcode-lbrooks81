@@ -71,7 +71,6 @@ class Joystick:
             self.last_direction = 'Left' if x < 127 else 'Right'
         elif abs(127 - y) > abs(127 - x):
             self.last_direction = 'Up' if y < 127 else 'Down'
-        
         return self.last_direction
 
     # Deleting (Calling destructor)
